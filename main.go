@@ -39,6 +39,7 @@ func main() {
 
 	// create the handlers
 	fh := handlers.NewFile(localStorageClass, l)
+	mw := handlers.GzipHandler{}
 
 	// create a new serve mux and register handlers
 	sm := mux.NewRouter()
@@ -54,6 +55,7 @@ func main() {
 		"/images/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}",
 		http.StripPrefix("/images/", http.FileServer(http.Dir(*basePath))),
 	)
+	gh.Use(mw.GzipMiddleware)
 
 	// create a new server
 	s := http.Server{
